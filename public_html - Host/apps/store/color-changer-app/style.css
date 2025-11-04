@@ -1,0 +1,8 @@
+.color-changer-container {
+  padding: 2rem;
+  text-align: center;
+}
+#color-title {
+  color: #3498db;
+  transition: color 0.4s ease;
+}

@@ -1,0 +1,139 @@
+/* --- Pääkontti ja yleiset asetukset --- */
+.uploader-app-v2 {
+  --glow-color: rgba(0, 123, 255, 0.5);
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+/* --- Yläreunan ilmoitus --- */
+.top-notification-container {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  pointer-events: none;
+}
+.top-notification {
+  background-color: var(--toast-success-bg, #28a745);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* --- Pudotusalue --- */
+.drop-zone {
+  flex-shrink: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--border-radius);
+  text-align: center;
+  color: var(--muted-text);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+}
+.drop-zone:not(.disabled):hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 20px var(--glow-color);
+  border-color: var(--button-primary-bg);
+}
+.drop-zone.drag-over {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 30px var(--glow-color);
+}
+.drop-zone.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.drop-zone-content { padding: 2rem; }
+.drop-zone .icon-wrapper { font-size: 2.5rem; line-height: 1; padding: 1rem; margin: 0 auto 1rem auto; width: 70px; height: 70px; border-radius: 50%; background: rgba(0,0,0,0.2); display: grid; place-items: center; color: var(--text-color); transition: transform 0.3s ease; }
+.drop-zone:hover .icon-wrapper { transform: scale(1.1); }
+.drop-zone h2 { margin: 0; color: var(--text-color); }
+.drop-zone p { margin: 0.25rem 0 0 0; }
+.drop-zone-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 20, 30, 0.8); backdrop-filter: blur(5px); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.drop-zone.loading .drop-zone-overlay { opacity: 1; pointer-events: all; }
+
+/* --- Historia --- */
+.history-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.history-container h3 {
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0;
+  color: var(--text-color);
+}
+.history-grid {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 0.5rem 1rem 1rem 0.5rem;
+}
+.history-placeholder {
+  grid-column: 1 / -1;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  color: var(--muted-text);
+  padding: 2rem;
+}
+.history-placeholder i { font-size: 2rem; margin-bottom: 0.5rem; }
+
+/* --- Kuvakortti --- */
+.image-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: um-fadeIn 0.5s;
+  padding: 0.75rem; 
+  gap: 0.75rem;
+  position: relative;
+}
+.image-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 15px var(--glow-color);
+  z-index: 10;
+}
+.card-thumbnail { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; }
+.card-body { padding: 0; display: flex; flex-direction: column; flex-grow: 1; }
+.card-timestamp { font-size: 0.75rem; color: var(--muted-text); margin-bottom: 0.75rem; }
+.card-actions { margin-top: auto; display: flex; gap: 0.5rem; }
+.card-actions button { flex-grow: 1; border: none; border-radius: 6px; padding: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: filter 0.2s ease; }
+.card-actions button:hover { filter: brightness(1.15); }
+
+/* --- API-avain modaali --- */
+.um-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); animation: um-fadeIn 0.3s ease; }
+.um-modal-content { background: var(--body-bg-end); border: 1px solid var(--panel-border); margin: 10% auto; padding: 0; width: 90%; max-width: 500px; border-radius: var(--border-radius); overflow: hidden; }
+.um-modal-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--panel-border); }
+.um-modal-header h2 { margin: 0; font-size: 1.2rem; }
+.um-modal-body { padding: 1.5rem; }
+.um-modal-description { color: var(--muted-text); margin-top: -10px; margin-bottom: 20px; font-size: 0.9rem; }
+.um-settings-option label { display: block; margin-bottom: 8px; }
+.um-settings-option input { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--panel-border); background: rgba(0,0,0,0.2); color: var(--text-color); box-sizing: border-box; }
+.um-modal-footer { padding: 1rem 1.5rem; background-color: rgba(0,0,0,0.2); border-top: 1px solid var(--panel-border); text-align: right; }

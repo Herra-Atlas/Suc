@@ -1,0 +1,48 @@
+<div id="uploader-app-v2" class="uploader-app-v2">
+  <!-- Yläreunan ilmoituksille -->
+  <div id="top-notification-container" class="top-notification-container"></div>
+
+  <!-- UUSI: API-avaimen asetusikkuna -->
+  <div id="api-key-modal" class="um-modal">
+    <div class="um-modal-content">
+      <div class="um-modal-header">
+        <h2>Aseta ImgBB API-avain</h2>
+      </div>
+      <div class="um-modal-body">
+        <p class="um-modal-description">Jatkaaksesi sinun tulee syöttää henkilökohtainen ImgBB API v1 -avaimesi. Saat sen ilmaiseksi ImgBB:n sivuilta.</p>
+        <div class="um-settings-option">
+          <label for="api-key-input">API-avain:</label>
+          <input type="password" id="api-key-input" placeholder="Liitä API-avaimesi tähän">
+        </div>
+      </div>
+      <div class="um-modal-footer">
+        <button id="save-api-key-btn" class="um-button-primary">Tallenna ja aloita</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latausalue -->
+  <div id="drop-zone" class="drop-zone">
+    <div class="drop-zone-content" id="drop-zone-prompt">
+      <div class="icon-wrapper"><i class="fas fa-file-image"></i></div>
+      <h2>Pudota kuva tähän</h2>
+      <p>tai klikkaa selataksesi tiedostoja</p>
+    </div>
+    <div class="drop-zone-overlay" id="loading-overlay">
+        <div class="um-spinner"></div>
+        <p>Ladataan...</p>
+    </div>
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+  </div>
+
+  <!-- Historia -->
+  <div class="history-container">
+    <h3>Lataushistoria</h3>
+    <div id="history-grid" class="history-grid">
+      <div id="history-placeholder" class="history-placeholder">
+        <i class="fas fa-history"></i>
+        <p>Ei aiempia latauksia.</p>
+      </div>
+    </div>
+  </div>
+</div>

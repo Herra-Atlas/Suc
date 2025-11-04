@@ -1,0 +1,959 @@
+:root {
+  --sidebar-bg: #000000; /* PÄIVITETTY SINUN KOODISTASI */
+  --body-bg-start: #071018;
+  --body-bg-end: #08121a;
+  --icon-color-default: #8b949e;
+  --icon-color-hover-active: #ffffff;
+  --active-bar-color: #ffffff;
+  --tooltip-bg: #212121;
+  --tooltip-text: #f1f1f1;
+  --text-color: #f1f1f1;
+  --muted-text: #a0a0a0;
+  --card-bg: rgba(255,255,255,0.02);
+}
+/* Muu CSS pysyy täysin samana kuin aiemmin... */
+html, body {
+  height: 100%; margin: 0; font-family: Inter, system-ui, sans-serif;
+  background: linear-gradient(180deg, var(--body-bg-start) 0%, var(--body-bg-end) 100%);
+  color: var(--text-color); overflow: hidden;
+}
+#app-container, .app { display: flex; height: 100vh; width: 100%; }
+.sidebar {
+  width: 72px; background: var(--sidebar-bg); border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 10;
+}
+.profile-picture { width: 44px; height: 44px; border-radius: 50%; cursor: pointer; object-fit: cover; }
+.nav-main {
+  margin-top: auto; margin-bottom: auto; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; width: 100%;
+}
+.nav-bottom { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.nav-item {
+  display: flex; justify-content: center; align-items: center;
+  width: 100%; height: 56px; position: relative; cursor: pointer; text-decoration: none;
+}
+.nav-item .icon svg { color: var(--icon-color-default); transition: color 0.2s ease-in-out; }
+.nav-item:hover .icon svg, .nav-item.active .icon svg { color: var(--icon-color-hover-active); }
+.nav-item.active::after {
+  content: ""; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  height: 24px; width: 4px; background: var(--active-bar-color); border-radius: 4px 0 0 4px;
+}
+.tooltip {
+  position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 12px;
+  padding: 6px 12px; background-color: var(--tooltip-bg); color: var(--tooltip-text);
+  border-radius: 6px; font-size: 14px; font-weight: 500; white-space: nowrap;
+  pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.2s ease;
+}
+.nav-item:hover .tooltip { opacity: 1; visibility: visible; transition-delay: 1s; }
+.main-content { flex: 1; padding: 32px; overflow-y: auto; }
+.content-card { background: var(--card-bg); border-radius: 14px; padding: 28px; margin-bottom: 18px; }
+h1 { font-weight: 600; margin: 0 0 16px 0; font-size: 28px; }
+p { color: var(--muted-text); line-height: 1.6; }
+
+
+
+
+
+
+
+/* ----- MODAL STYLES ----- */
+#app-modal {
+  display: none; /* Oletuksena piilossa */
+  position: fixed; /* Pysyy paikallaan, vaikka sivua selaisi */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000; /* Varmistaa, että on kaiken muun päällä */
+}
+
+.modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Tumma, läpinäkyvä tausta */
+  backdrop-filter: blur(4px); /* Sumennusefekti taustalle */
+}
+
+.modal-content {
+  background-color: #181a1b;
+  color: var(--text-color);
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted-text);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-color);
+}
+
+.modal-body p {
+  line-height: 1.7;
+}
+
+/* 
+  Yleinen button-primary-tyyli. 
+  Voit siirtää tämän yleisemmäksi tyyliksi, jos haluat käyttää sitä muuallakin.
+*/
+.button-primary {
+  background-color: var(--color-primary, #7b5dff);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(123, 93, 255, 0.2);
+}
+
+.button-primary:hover {
+  background-color: var(--color-primary-hover, #6a4fdf);
+  transform: translateY(-3px); /* Nostaa nappia hieman */
+  box-shadow: 0 6px 20px rgba(123, 93, 255, 0.3);
+}
+
+.button-primary:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(123, 93, 255, 0.2);
+}
+
+/* Tyyli napille, kun se on pois käytöstä */
+.button-primary:disabled {
+  background-color: var(--color-gray-dark, #50506a);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+
+
+
+
+
+/* ----- CARD GRID & CARD STYLES ----- */
+.card-grid {
+  display: grid;
+  /* Luo responsiivisen ruudukon: niin monta saraketta kuin mahtuu, min. 250px leveitä */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px; /* Väli korttien välillä */
+}
+
+.explore-card {
+  background-color: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden; /* Varmistaa, että kuva ei mene reunojen yli */
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.explore-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.card-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover; /* Varmistaa, että kuva täyttää tilan leikkaamatta mittasuhteita */
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.card-description {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted-text);
+  line-height: 1.5;
+}
+
+
+/* ----- LISÄÄ TÄMÄ TIEDOSTON LOPPUUN ----- */
+
+/* Asetukset-sivun layout */
+.settings-layout {
+  display: flex;
+  width: 100%;
+  gap: 32px;
+}
+.settings-sidebar {
+  flex-shrink: 0;
+  width: 200px;
+}
+.settings-sidebar h2 {
+  margin-top: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.settings-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.settings-nav-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--muted-text);
+  transition: background-color 0.2s, color 0.2s;
+}
+.settings-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+}
+.settings-nav-item.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  font-weight: 500;
+}
+.settings-content {
+  flex-grow: 1;
+}
+.settings-section {
+  display: none; /* Piilotetaan kaikki osiot oletuksena */
+}
+.settings-section.active {
+  display: block; /* Näytetään vain aktiivinen */
+}
+
+/* Teemanvaihtajan tyylit */
+.theme-switcher-container {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--card-bg);
+  padding: 12px;
+  border-radius: 8px;
+}
+.theme-option label {
+  font-size: 14px;
+  color: var(--muted-text);
+}
+.theme-option input[type="color"] {
+  width: 100%;
+  height: 40px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+/* Piilotetaan piilotetut napit */
+.nav-item.hidden {
+  display: none;
+}
+/* Toissijainen nappi (Asetukset) */
+.button-secondary {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: background-color 0.2s ease;
+}
+.button-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+
+
+
+
+
+
+/* === PROFIILISIVUN TYYLIT === */
+
+.profile-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pfp-editor {
+  flex: 0 0 200px; /* Kiinteä leveys kuvaeditorille */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.details-editor {
+  flex: 1 1 300px; /* Joustava leveys nimelle ja biolle */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-picture-large {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--card-bg-light, #3a3a4c);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-picture-large:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color-muted, #a0a0b0);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #444);
+  background-color: var(--card-bg-dark, #1e1e28);
+  color: var(--text-color, #f0f0f0);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--active-bar-color, #7b5dff);
+  box-shadow: 0 0 0 3px rgba(123, 93, 255, 0.3);
+}
+
+textarea.input-field {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.pfp-error {
+  font-size: 0.85rem;
+  color: #ff6b6b;
+  text-align: center;
+  min-height: 1.2em; /* Estää layoutin hyppimisen */
+}
+
+.profile-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#save-profile-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+
+
+
+/* === TIEDOSTOT-SIVUN TYYLIT === */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.title-underline {
+  width: 100%;
+  height: 2px;
+  background-color: var(--card-bg-light, #3a3a4c);
+  margin-bottom: 2rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.empty-state-message {
+  color: var(--text-color-muted, #a0a0b0);
+  font-size: 1.1rem;
+  text-align: center;
+  grid-column: 1 / -1; /* Vie koko ruudukon leveyden */
+  margin-top: 4rem;
+}
+
+/* === UUDET KORTTITYYLIT === */
+.file-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  position: relative; /* Tarvitaan tyyppimerkille */
+  border: 1px solid transparent;
+}
+
+.file-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: var(--active-bar-color);
+}
+
+.file-card .card-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.file-card .card-body {
+  padding: 1rem;
+}
+
+.file-card .card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-type-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  z-index: 1;
+}
+
+
+
+
+
+/* === EXPLORE-SIVUN UUDET TYYLIT === */
+
+.explore-section {
+  margin-bottom: 3rem;
+}
+
+.explore-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--card-bg-light, #3a3a4c);
+}
+
+.exp-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.exp-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: var(--active-bar-color);
+}
+
+.exp-card .card-image {
+  width: 100%;
+  height: 120px; /* Hieman matalampi kuva kuin tiedostoissa */
+  object-fit: cover;
+  display: block;
+}
+
+.exp-card .card-body {
+  padding: 1rem;
+}
+
+.exp-card .card-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.exp-card .card-description {
+  font-size: 0.9rem;
+  color: var(--text-color-muted, #a0a0b0);
+  margin: 0;
+}
+
+/* === TIEDOSTOJEN POISTONAPPI === */
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(220, 53, 69, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+
+.file-card:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  background-color: #dc3545;
+  transform: scale(1.1);
+}
+
+/* === MODAALIN VALINNAT === */
+.modal-options {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* === VAHVISTUSMODAALI === */
+.button-danger {
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #dc3545;
+}
+.button-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+.modal-button-group {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* === UUDEN TIEDOSTON MODAALI === */
+.color-picker-group {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+.color-picker-group input[type="color"] {
+  width: 50px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* === MUISTIO V3 TYYLIT === */
+.notepad-container {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.notepad-container .app-header h1 {
+  position: static; transform: none; /* Kumotaan vanha keskitys */
+}
+.notepad-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--card-bg-light);
+}
+.toolbar-item {
+  background: var(--card-bg-light);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+}
+.toolbar-item:hover {
+  background-color: var(--active-bar-color);
+}
+.notepad-editor-area {
+  flex-grow: 1;
+  padding: 2rem 4rem;
+  overflow-y: auto;
+  font-family: Arial, sans-serif; /* Oletusfontti */
+}
+#editor:focus {
+  outline: none;
+}
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--sidebar-bg);
+  border-top: 1px solid var(--card-bg-light);
+}
+.footer-item {
+  font-size: 0.8rem;
+  color: var(--text-color-muted);
+}
+.save-status.saved { color: #28a745; }
+.save-status.saving { color: #ffc107; }
+
+/* === UUDEN TIEDOSTON MODAALI VÄRINAPPI === */
+.color-picker-group input[type="color"] {
+  width: 100%; height: 35px;
+}
+
+
+
+
+
+
+
+
+/* === PIIRUSTUSSOVELLUS (LOPULLINEN) === */
+.drawing-container {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #121212;
+}
+
+.drawing-toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.separator {
+  width: 1px;
+  height: 24px;
+  background-color: var(--border-color);
+  margin: 0 0.5rem;
+}
+
+.tool-btn {
+  width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color);
+  background-color: var(--card-bg-light); color: var(--text-color);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+}
+
+.tool-btn:hover, .tool-btn.active {
+  background-color: var(--active-bar-color); border-color: var(--active-bar-color); color: white;
+}
+
+.preset-group {
+  display: flex; gap: 0.5rem; align-items: center;
+}
+
+.preset-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%; border: 2px solid var(--border-color);
+  cursor: pointer; transition: transform 0.2s, border-color 0.2s;
+}
+
+.preset-btn:hover { transform: scale(1.1); }
+.preset-btn.active { border-color: white; box-shadow: 0 0 0 2px var(--active-bar-color); }
+
+#current-color-indicator {
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2);
+}
+
+#viewport {
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  cursor: crosshair;
+}
+
+#canvas-container {
+  position: absolute;
+  top: 0; left: 0;
+  transform-origin: 0 0;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.save-badge {
+  font-size: 0.8rem; padding: 4px 8px; border-radius: 12px; background: rgba(0,0,0,0.2);
+}
+.save-badge.saved { color: #4cd964; }
+.save-badge.saving { color: #ffcc00; }
+
+
+/* =============================================== */
+/* Kirjautumissivu (Login Container)               */
+/* =============================================== */
+
+/* 
+  Tämä asettaa .login-containerin vanhemman (esim. #app-container)
+  käyttämään koko näytön korkeutta ja keskittämään sisällön.
+  Tämä on tärkein osa keskitystä varten.
+*/
+#app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login-container {
+  /* Ulkoasu ja sijoittelu */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  /* Visuaalinen tyyli */
+  background-color: var(--color-background-secondary, #252538); /* Tumma tausta */
+  padding: 3rem 4rem; /* Reilusti sisäistä tilaa */
+  border-radius: 16px; /* Pyöristetyt kulmat */
+  border: 1px solid var(--color-border, #40405a); /* Hienovarainen reunus */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Selkeä varjo */
+  
+  /* Rajoitukset ja animaatiot */
+  max-width: 500px;
+  width: 90%; /* Varmistaa, että pienillä näytöillä ei tule liian leveä */
+  animation: fadeInFromBottom 0.6s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+/* Otsikko */
+.login-container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Kuvausteksti */
+.login-container p {
+  color: var(--color-text-secondary, #a0a0c0);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  max-width: 350px; /* Estää tekstiä venymästä liikaa */
+}
+
+/* Kirjautumisen tilaviesti */
+.login-status {
+  margin-top: 1.5rem;
+  min-height: 1.2em; /* Varaa tilaa, jotta asettelu ei hyppele, kun teksti ilmestyy */
+  color: var(--color-text-secondary, #a0a0c0);
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+/* Context Menu Styles */
+.context-menu {
+  position: absolute;
+  background-color: var(--color-background-secondary, #252538);
+  border: 1px solid var(--color-border, #40405a);
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 6px 0;
+  z-index: 1000;
+  min-width: 160px;
+  animation: contextMenuFadeIn 0.15s ease-out;
+}
+
+.context-menu-item {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  color: var(--color-text-primary, #ffffff);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.context-menu-item:hover {
+  background-color: var(--color-primary, #7b5dff);
+}
+
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+
+
+
+
+
+
+/* =============================================== */
+/* Sivupalkin kiinnitettyjen sovellusten kuvakkeet  */
+/* =============================================== */
+
+/* 
+  Tämä sääntö kohdistuu VAIN niihin kuvakkeisiin, jotka ovat 
+  kiinnitettyjen sovellusten linkeissä (`data-nav-type="app"`).
+*/
+.sidebar .nav-item[data-nav-type="app"] .sidebar-app-icon {
+  /* Tärkein osa: tekee kuvasta täydellisen ympyrän */
+  border-radius: 50%;
+  
+  opacity: 0.65;
+
+  /* Varmistaa, että kuva täyttää ympyrän vääristymättä (jos kuva ei ole neliö) */
+  object-fit: cover;
+  
+  /* Lisätään pehmeä siirtymä tehosteita varten */
+  transition: all 0.2s ease-out;
+  
+  /* Varmistetaan koko, jotta se on yhdenmukainen SVG-ikonien kanssa */
+  width: 20px;
+  height: 20px;
+}
+
+/* Kun hiiri viedään linkin päälle, skaalataan kuvaketta hieman suuremmaksi */
+.sidebar .nav-item[data-nav-type="app"]:hover .sidebar-app-icon {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+/* Kun kiinnitetty sovellus on aktiivinen, lisätään sille hehkuva reunus */
+.sidebar .nav-item[data-nav-type="app"].active .sidebar-app-icon {
+  box-shadow: 0 0 10px var(--color-primary, #7b5dff);
+  transform: scale(1.1); /* Pidetään se hieman suurempana aktiivisena */
+}
+
+
+
+
+/*
+ * TÄRKEIN KORJAUS:
+ * Pakotetaan sovelluksen suoritusnäkymä käyttämään koko korkeuden.
+*/
+
+.app-runner {
+  display: flex;
+  flex-direction: column; /* Asettaa lapset (header, content) pystysuoraan */
+  height: 100%; /* Varmistaa, että tämä elementti yrittää täyttää vanhempansa */
+}
+
+.runner-header {
+  flex-shrink: 0; /* Estää headeria kutistumasta */
+}
+
+.runner-content {
+  flex-grow: 1; /* TÄMÄ ON TAATEMPPU: Pakottaa tämän elementin täyttämään KAIKEN jäljelle jäävän tilan */
+  /* Jotta sisällä oleva CometChat toimii oikein, lisätään nämäkin: */
+  display: flex;
+  flex-direction: column;
+}
+
+
+.runner-header {
+  /* Varmistetaan, että header käyttää flexboxia */
+  display: flex;
+  align-items: center;
+}
+
+.zoom-controls {
+  /* Tämä työntää napit oikeaan reunaan */
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem; /* Pieni väli nappien väliin */
+}
+
+/* Yleinen tyyli ikoni-napeille, voit muokata tätä */
+.button-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg-color);
+  color: var(--text-primary-color);
+  cursor: pointer;
+  font-weight: bold;
+}
+.button-icon:hover {
+  background-color: var(--accent-color);
+  color: white;
+}

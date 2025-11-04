@@ -1,0 +1,41 @@
+[
+  {
+    "id": "app-color-changer",
+    "name": "Värinvaihtaja",
+    "version": "1.0.0",
+    "description": "Simppeli testisovellus, joka vaihtaa tekstin väriä napista.",
+    "updateInfo": "Ensimmäinen julkaisu.",
+    "iconUrl": "https://placehold.co/100x100/7b5dff/ffffff?text=V",
+    "files": {
+      "html": "https://meikahoitaa.fi/apps/store/color-changer-app/index.html",
+      "css": "https://meikahoitaa.fi/apps/store/color-changer-app/style.css",
+      "js": "https://meikahoitaa.fi/apps/store/color-changer-app/main.js"
+    }
+  },
+  {
+    "id": "app-simple-counter",
+    "name": "Laskuri",
+    "version": "1.0.0",
+    "description": "Yksinkertainen laskuri, jolla voit kasvattaa ja vähentää numeroa.",
+    "updateInfo": "Ensimmäinen julkaisu.",
+    "iconUrl": "https://placehold.co/100x100/2ecc71/ffffff?text=L",
+    "files": {
+      "html": "https://meikahoitaa.fi/apps/store/simple-counter-app/index.html",
+      "css": "https://meikahoitaa.fi/apps/store/simple-counter-app/style.css",
+      "js": "https://meikahoitaa.fi/apps/store/simple-counter-app/main.js"
+    }
+  },
+  {
+    "id": "img-saving-thing",
+    "name": "Kuvien tallennus",
+    "version": "1.0.0",
+    "description": "Kuvien tallennus julkiseen, mutta ilmaiseen pilveen.",
+    "updateInfo": "Ensimmäinen julkaisu.",
+    "iconUrl": "https://img.freepik.com/premium-photo/picture-image-symbol-blue_172429-94.jpg",
+    "files": {
+      "html": "https://meikahoitaa.fi/apps/store/img-saving-thing/index.html",
+      "css": "https://meikahoitaa.fi/apps/store/img-saving-thing/style.css",
+      "js": "https://meikahoitaa.fi/apps/store/img-saving-thing/main.js"
+    }
+  }
+]
