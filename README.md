@@ -62,6 +62,9 @@ You can install everything easily on Windows using PowerShell:
 - winget install Microsoft.VisualStudio.2022.BuildTools
 
 
+
+
+
 npm install
 npm run tauri dev
 
@@ -70,3 +73,6 @@ npm run tauri dev
 - src/utils/api.js -  (const APPS_URL = 'https://Yourhost.com/apps/store/apps.json';)
 - src/main.js  -  (const APPS_URL = 'https://Yourhost.com/apps/store/apps.json';)
 - HOST/apps/suc.php Create ur database and change to correct credentials.
+
+### Oauth
+*Create OAuth apps for Discord and Google. If you need help creating them, ask ChatGPT and (optionally) share your `suc.php` file — it can help you implement the OAuth callback and user handling.*
