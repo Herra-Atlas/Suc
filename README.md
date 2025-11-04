@@ -67,6 +67,6 @@ npm run tauri dev
 
 
 ### Edit files
-src/utils/api.js -  (const APPS_URL = 'https://Yourhost.com/apps/store/apps.json';)
-src/main.js  -  (const APPS_URL = 'https://Yourhost.com/apps/store/apps.json';)
-HOST/apps/suc.php Create ur database and change to correct credentials.
+- src/utils/api.js -  (const APPS_URL = 'https://Yourhost.com/apps/store/apps.json';)
+- src/main.js  -  (const APPS_URL = 'https://Yourhost.com/apps/store/apps.json';)
+- HOST/apps/suc.php Create ur database and change to correct credentials.
